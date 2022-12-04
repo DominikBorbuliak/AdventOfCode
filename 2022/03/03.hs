@@ -4,6 +4,7 @@ import Data.Maybe
 main = do
     content <- readFile "03_input.txt"
     print $ sum $ map (getIntersectionCharValue) (lines content)
+    print $ (getBadgesValue) $ (lines content)
 
 alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
@@ -17,4 +18,9 @@ getComparements (x1:cmp1) (x2:cmp2) = if length cmp1 == length cmp2
     then ((x1:cmp1), (x2:cmp2))
     else getComparements (x1:cmp1 ++ [x2]) (cmp2)
 
--- ! Solution: 8153
+getBadgesValue :: [String] -> Int
+getBadgesValue (x:y:z:arr) = ((1+) $ fromJust $ elemIndex ((x `intersect` y `intersect` z) !! 0) alphabet)
+    + if length arr == 0 then 0 else getBadgesValue arr
+
+-- ! Solution A: 8153
+-- ! Solution B: 2342
