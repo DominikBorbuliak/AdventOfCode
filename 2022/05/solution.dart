@@ -1,120 +1,90 @@
 import 'dart:io';
 import 'package:stack/stack.dart';
+import 'package:tuple/tuple.dart';
+
+typedef CrateStack = Stack<String>;
+typedef CrateStacks = List<Stack<String>>;
 
 void main() async {
-  File('input.txt').readAsLines().then((List<String> lines) {
-    bool readingStacks = true;
-    List<Stack<String>> stacksA = [];
-    List<Stack<String>> stacksB = [];
+  var lines = (await File('input.txt').readAsLines()).where((line) => line.isNotEmpty).toList();
+  var delimiterLineIdx = lines.indexWhere((line) => RegExp(r'^[0-9]+$').hasMatch(line.replaceAll(" ", "")));
 
-    lines.forEach((line) {
-      if (line.trim() == "")
-        readingStacks = false;
-      else if (readingStacks) {
-        var currentStackLevels = getStackLevels(line);
+  var stackLines = lines.take(delimiterLineIdx).toList();
 
-        var idx = 0;
-        currentStackLevels.forEach((item) {
-          if (stacksA.length - 1 < idx)
-            stacksA.add(Stack());
-          if (stacksB.length - 1 < idx)
-            stacksB.add(Stack());
+  var stacksA = getStacks(stackLines);
+  var stacksB = getStacks(stackLines);
 
-          if (item.trim() != "") {
-            if (isNumeric(item[1])) {
-              stacksA[idx] = reverseStack(stacksA[idx]);
-              stacksB[idx] = reverseStack(stacksB[idx]);
-            }
-            else {
-              stacksA[idx].push(item[1]);
-              stacksB[idx].push(item[1]);
-            }
-          }
+  var finalStacks = doMovements(lines.skip(delimiterLineIdx + 1).toList(), stacksA, stacksB);
 
-            idx++;
-        });
-      }
-      else {
-        var splittedLine = line.split(" ");
-        
-        var moveCountA = int.parse(splittedLine[1]);
-        var moveCountB = int.parse(splittedLine[1]);
-        var moveFrom = int.parse(splittedLine[3]);
-        var moveTo = int.parse(splittedLine[5]);
-
-        var moveFromStackA = stacksA[moveFrom - 1];
-        var moveToStackA = stacksA[moveTo - 1];
-
-        var moveFromStackB = stacksB[moveFrom - 1];
-        var moveToStackB = stacksB[moveTo - 1];
-
-        while (moveFromStackA.isNotEmpty && moveCountA != 0) {
-          moveCountA--;
-          moveToStackA.push(moveFromStackA.pop());
-        }
-
-        List<String> toMoveB = [];
-        while (moveFromStackB.isNotEmpty && moveCountB != 0) {
-          moveCountB--;
-          toMoveB.add(moveFromStackB.pop());
-        }
-
-        for (int i = toMoveB.length - 1; i >= 0; i--)
-          moveToStackB.push(toMoveB[i]);
-      }
-    });
-
-    var resultA = "";
-    stacksA.forEach((stack) {
-      resultA += stack.pop();
-    });
-
-    var resultB = "";
-    stacksB.forEach((stack) {
-      resultB += stack.pop();
-    });
-
-    print(resultA);
-    print(resultB);
-  });
+  printResult(finalStacks.item1);
+  printResult(finalStacks.item2);
 }
 
-List<String> getStackLevels(String line) {
-  List<String> currentStackLevels = [];
+void printResult(CrateStacks stacks) {
+  stacks.forEach((stack) => stdout.write(stack.top()));
+  stdout.writeln();
+}
 
-  for (int i = 0; i < line.length; i++) {
-    if (i % 4 == 0) {
-      final tempItem = line.substring(i, i + 3);
-      currentStackLevels.add(tempItem);
-      i++;
+CrateStacks moveCratesByOne(CrateStacks stacks, int count, int from, int to) {
+  while (stacks[from].isNotEmpty && count > 0) {
+    count--;
+    stacks[to].push(stacks[from].pop());
+  }
+
+  return stacks;
+}
+
+CrateStacks moveCratesAtOnce(CrateStacks stacks, int count, int from, int to) {
+  CrateStack tmpStack = Stack();
+
+  while (stacks[from].isNotEmpty && count > 0) {
+    count--;
+    tmpStack.push(stacks[from].pop());
+  }
+
+  while (tmpStack.isNotEmpty) {
+    stacks[to].push(tmpStack.pop());
+  }
+
+  return stacks;
+}
+
+Tuple2<CrateStacks, CrateStacks> doMovements(List<String> movements, CrateStacks stacksA, CrateStacks stacksB) {
+  movements.forEach((movement) {
+    var movementSplit = movement.split(" ");
+    var count = int.parse(movementSplit[1]);
+    var from = int.parse(movementSplit[3]) - 1;
+    var to = int.parse(movementSplit[5]) - 1;
+
+    stacksA = moveCratesByOne(stacksA, count, from, to);
+    stacksB = moveCratesAtOnce(stacksB, count, from, to);
+  });
+
+  return Tuple2<CrateStacks, CrateStacks>(stacksA, stacksB);
+}
+
+List<String> getStackLevel(String line) {
+  return List<String>.generate((line.length + 1) ~/ 4, (index) => line[1 + index * 4]);
+}
+
+CrateStacks getStacks(List<String> lines) {
+  CrateStacks stacks = [];
+
+  for (var i = lines.length - 1; i >= 0; i--) {
+    var currentStackLevels = getStackLevel(lines[i]);
+
+    if (stacks.isEmpty) {
+      currentStackLevels.forEach((_) => stacks.add(Stack()));
+    }
+
+    for (var j = 0; j < currentStackLevels.length; j++) {
+      if (currentStackLevels[j] != " ") {
+        stacks[j].push(currentStackLevels[j]);
+      }
     }
   }
 
-  return currentStackLevels;
-}
-
-bool isNumeric(String string) {
-  if (string == null || string.isEmpty) {
-    return false;
-  }
-
-  final number = num.tryParse(string);
-
-  if (number == null) {
-    return false;
-  }
-
-  return true;
-}
-
-Stack<String> reverseStack(Stack<String> stack) {
-  Stack<String> reversedStack = Stack();
-
-  while (stack.isNotEmpty) {
-    reversedStack.push(stack.pop());
-  }
-
-  return reversedStack;
+  return stacks;
 }
 
 // ! Solution A: TLNGFGMFN
