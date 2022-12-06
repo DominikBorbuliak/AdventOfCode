@@ -13,7 +13,7 @@ int main() {
     int partiallyOverleapingCount = 0;
 
     string line;
-    ifstream file("04_input.txt");
+    ifstream file("input.txt");
 
     while (getline(file, line)) {
         vector<string> lineVect = split(line, ",");

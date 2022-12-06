@@ -126,3 +126,14 @@ doc/api/
 .env
 
 # End of https://www.toptal.com/developers/gitignore/api/dart
+
+
+# Created by https://www.toptal.com/developers/gitignore/api/nim
+# Edit at https://www.toptal.com/developers/gitignore?templates=nim
+
+### Nim ###
+nimcache/
+nimblecache/
+htmldocs/
+
+# End of https://www.toptal.com/developers/gitignore/api/nim

@@ -1,5 +1,5 @@
 main = do
-    content <- readFile "02_input.txt"
+    content <- readFile "input.txt"
     print(getMaxScoreA $ lines content)
     print(getMaxScoreB $ lines content)
 

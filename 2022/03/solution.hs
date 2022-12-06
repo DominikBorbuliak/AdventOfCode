@@ -2,7 +2,7 @@ import Data.List
 import Data.Maybe
 
 main = do
-    content <- readFile "03_input.txt"
+    content <- readFile "input.txt"
     print $ sum $ map (getIntersectionCharValue) (lines content)
     print $ (getBadgesValue) $ (lines content)
 

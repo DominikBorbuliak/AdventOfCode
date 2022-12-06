@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:stack/stack.dart';
 
 void main() async {
-  File('05_input.txt').readAsLines().then((List<String> lines) {
+  File('input.txt').readAsLines().then((List<String> lines) {
     bool readingStacks = true;
     List<Stack<String>> stacksA = [];
     List<Stack<String>> stacksB = [];

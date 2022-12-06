@@ -5,3 +5,4 @@
 ### Day 03: Haskell - DONE
 ### Day 04: C++ - DONE
 ### Day 05: Dart - DONE
+### Day 06: Nim - DONE

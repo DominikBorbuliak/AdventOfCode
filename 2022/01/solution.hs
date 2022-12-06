@@ -1,7 +1,7 @@
 import Data.List
 
 main = do
-    content <- readFile "01_input.txt"
+    content <- readFile "input.txt"
     let linesOfFile = lines content
     print(getTopNSum 1 $ getSums linesOfFile 0)
     print(getTopNSum 3 $ getSums linesOfFile 0)
