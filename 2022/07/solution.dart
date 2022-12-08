@@ -1,25 +1,5 @@
 import 'dart:io';
 
-void main() async {
-  var lines = await File('input.txt').readAsLines();
-  var root = buildTree(lines);
-  printResults(toList(root), root);
-}
-
-void printResults(List<Node> nodes, Node root) {
-  var resultA = nodes.where((node) => !node.isFile && node.size < 100000).map((node) => node.size).reduce((sum, size) => sum + size);
-
-  var resultB = nodes.where((node) => !node.isFile).toList();
-  resultB.sort((a, b) => a.size.compareTo(b.size));
-
-  var maxSpace = 70000000;
-  var updateSize = 30000000;
-  var needToFreeUp = root.size + updateSize - maxSpace;
-
-  print(resultA);
-  print(resultB.firstWhere((node) => node.size > needToFreeUp).size);
-}
-
 enum CommandType {
   none,
   cd,
@@ -40,6 +20,26 @@ class Node {
     this.subNodes = subNodes;
     this.parent = parent;
   }
+}
+
+void main() async {
+  var lines = await File('input.txt').readAsLines();
+  var root = buildTree(lines);
+  printResults(toList(root), root);
+}
+
+void printResults(List<Node> nodes, Node root) {
+  var resultA = nodes.where((node) => !node.isFile && node.size < 100000).map((node) => node.size).reduce((sum, size) => sum + size);
+
+  var resultB = nodes.where((node) => !node.isFile).toList();
+  resultB.sort((a, b) => a.size.compareTo(b.size));
+
+  var maxSpace = 70000000;
+  var updateSize = 30000000;
+  var needToFreeUp = root.size + updateSize - maxSpace;
+
+  print(resultA);
+  print(resultB.firstWhere((node) => node.size > needToFreeUp).size);
 }
 
 List<Node> toList(Node node) {
