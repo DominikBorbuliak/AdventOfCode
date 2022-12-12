@@ -10,9 +10,9 @@ type
         testThrowIfFalse: int
 
 proc getMonkeys(): tuple[monkeys: seq[seq[int]], options: seq[Option]] =
-    var monkeys: seq[seq[int]];
-    var options: seq[Option];
-    var idx = 0;
+    var monkeys: seq[seq[int]]
+    var options: seq[Option]
+    var idx = 0
 
     for line in lines "input.txt":
         if line.contains("Monkey"):
@@ -70,7 +70,7 @@ proc getActivityAfterNRounds(monkeys: var seq[seq[int]], options: seq[Option], n
                     monkeys[options[idx].testThrowIfFalse].add(worryLevel)
 
             activity[idx] += len(monkeys[idx])
-            monkeys[idx] = newSeq[int]();
+            monkeys[idx] = newSeq[int]()
             idx += 1
 
     return activity
