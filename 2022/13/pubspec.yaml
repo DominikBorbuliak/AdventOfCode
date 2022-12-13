@@ -1,0 +1,10 @@
+name: newtify
+
+environment:
+  sdk: '>=2.13.0 <3.0.0'
+  
+dependencies:
+  tuple: ^2.0.1
+
+dev_dependencies:
+  test: '>=1.15.0 <2.0.0'
